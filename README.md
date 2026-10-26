@@ -114,6 +114,7 @@ to it.
 | `CLAUDEMETER_BARS` | `1` | `0` drops the meter before each percentage |
 | `CLAUDEMETER_PACE` | `1` | `0` removes the pace tick from the meters, the `pace` segment and the budget chart |
 | `CLAUDEMETER_BAR_WIDTH` | `6` (`8` in pill) | Characters per meter (1–30) |
+| `CLAUDEMETER_EFFORT` | `1` | `0` hides the effort level after the model |
 | `CLAUDEMETER_COLOR` | `1` | `0` disables colour; `NO_COLOR` is honoured too |
 | `CLAUDEMETER_COLOR_DEPTH` | auto | Force `24`, `8`, `4` or `0` if the terminal is detected wrong |
 | `CLAUDEMETER_REPORT_WIDTH` | `72` | Columns for the `/claudemeter:usage` dashboard (64–140) |

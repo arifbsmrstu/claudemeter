@@ -54,6 +54,7 @@ const resetMode = resolveResetMode(env.CLAUDEMETER_RESETS);
 const showPace = !isOff(env.CLAUDEMETER_PACE);
 const barWidth = clampInt(env.CLAUDEMETER_BAR_WIDTH, style === "pill" ? 8 : 6, 1, 30);
 const separator = env.CLAUDEMETER_SEPARATOR ?? defaultSeparator();
+const showEffort = !isOff(env.CLAUDEMETER_EFFORT);
 // The theme preview renders the real status line once per theme, in-process, to
 // guarantee what it shows is what you will get. It must not leave nine samples
 // and a rewritten snapshot behind for doing so.
@@ -127,7 +128,7 @@ function renderSegment(name, p, ledger, history) {
     case "cost":
       return renderCost(name, p.cost);
     case "model":
-      return renderPlain("model", p.model?.display_name);
+      return renderPlain("model", p.model?.display_name, showEffort ? effortTag(p.effort?.level) : "");
     case "dir":
       return renderPlain("dir", basename(p.workspace?.current_dir));
     case "branch":
@@ -222,9 +223,25 @@ function renderLines(cost) {
   return `${icon ? icon + " " : ""}${counts}`;
 }
 
-function renderPlain(name, value) {
+const EFFORT_COLORS = {
+  medium: ["#4ade80"],
+  high: ["#a78bfa"],
+  xhigh: ["#e879f9"],
+  max: ["#ef4444", "#cb679f", "#a78bfa"],
+};
+
+function effortTag(level) {
+  if (!level) return "";
+  const colors = EFFORT_COLORS[level] ?? [hue(theme, "model")];
+  const text = colors.length > 1
+    ? [...level].map((c, i) => palette.paint(c, colors[Math.min(i, colors.length - 1)])).join("")
+    : palette.paint(level, colors[0]);
+  return palette.paint(" · ", theme.muted) + text;
+}
+
+function renderPlain(name, value, tail = "") {
   if (!value) return null;
-  const body = palette.paint(String(value), hue(theme, name));
+  const body = palette.paint(String(value), hue(theme, name)) + tail;
   if (style === "words" || style === "compact") return body;
   const icon = glyph(name);
   const run = `${icon ? icon + " " : ""}${body}`;
